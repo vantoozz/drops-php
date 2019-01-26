@@ -33,10 +33,13 @@ final class WithDefaultContext implements DropsClientInterface
 
     /**
      * @param Drop $drop
+     * @throws \Vantoozz\Drops\Exceptions\ContextTransformException
      */
     public function drop(Drop $drop): void
     {
-        $drop->mergeContextWith($this->defaultContext);
+        $drop->transformContextWith(function (array $context) {
+            return $context + $this->defaultContext;
+        });
 
         $this->dropsClient->drop($drop);
     }

@@ -2,6 +2,8 @@
 
 namespace Vantoozz\Drops;
 
+use Vantoozz\Drops\Exceptions\ContextTransformException;
+
 /**
  * Class Drop
  * @package Vantoozz\Drops
@@ -46,10 +48,17 @@ final class Drop
     }
 
     /**
-     * @param array $context
+     * @param callable $callback
+     * @throws ContextTransformException
      */
-    public function mergeContextWith(array $context): void
+    public function transformContextWith(callable $callback): void
     {
-        $this->context += $context;
+        $transformed = $callback($this->context);
+
+        if (!is_array($transformed)) {
+            throw new ContextTransformException('Context transformation result is not array');
+        }
+
+        $this->context = $transformed;
     }
 }
